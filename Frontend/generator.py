@@ -125,17 +125,29 @@ class Song:
         import math
         import wave
         import struct
-        note_list = [('A0', 27.50),('B0', 30.87),('C0', 16.35),('D0', 18.35),('E0', 20.60),('F0', 21.83),('G0', 24.50),
-             ('A1', 55.00),('B1', 61.74	),('C1', 32.70),('D1', 36.71),('E1', 41.20),('F1', 43.65),('G1', 49.00),
-             ('A2', 110.00),('B2', 123.47),('C2', 65.41),('D2', 73.42),('E2', 82.41),('F2', 87.31),('G2', 98.00),
-             ('A3', 220.00),('B3', 246.94),('C3', 130.81,),('D3', 146.83),('E3', 164.81),('F3', 174.61),('G3', 196.00),
-             ('A4', 440.00),('B4', 493.88),('C4', 261.63),('D4', 293.66),('E4', 329.63),('F4', 349.23),('G4', 392.00),
-             ('A5', 880.00),('B5', 987.77),('C5', 523.25),('D5', 587.33),('E5', 659.25),('F5', 698.46),('G5', 783.99),
-             ('A6', 1760.00),('B6', 1975.53),('C6', 1046.50),('D6', 1174.66),('E6', 1318.51),('F6', 1396.91),('G6', 1567.98),
-             ('A7', 3520.00),('B7', 3951.07),('C7', 2093.00),('D7', 2349.32),('E7', 2637.02),('F7', 2793.83),('G7', 3135.96),
-             ('A8',7040.00),('B8', 7902.13),('C8', 4186.01),('D8', 4698.63),('E8', 5274.04),('F8', 5587.65),('G8', 6271.93)]
-        note_dic = dict(note_list)
-        frequency = note_dic[note]
+        # Calculate Semitones
+        semi_tones = 0
+        
+        # Add Octaves
+        semi_tones += 12 * int(note[1])
+        
+        # Adjust for note
+        if "b" in str.lower(note[0]):
+            semi_tones += 3
+        elif "c" in str.lower(note[0]):
+            semi_tones -= 9
+        elif "d" in str.lower(note[0]):
+            semi_tones -= 7
+        elif "e" in str.lower(note[0]):
+            semi_tones -= 5
+        elif "f" in str.lower(note[0]):
+            semi_tones -= 4
+        elif "g" in str.lower(note[0]):
+            semi_tones -= 2
+        
+        # Complicated math. Calculate Equal Temperament frequency. 
+        frequency = 27.5 * (2**(1/float(12))) ** semi_tones
+        
         sampleRate = 44100.0
         SAMPLE_LEN = sampleRate * duration * 0.5
         noise_output = wave.open('gened_notes/{}{}.wav'.format(note,duration), 'w')
