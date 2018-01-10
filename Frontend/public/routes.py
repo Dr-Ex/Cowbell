@@ -1,9 +1,4 @@
-from flask import g
-from flask import render_template
-from flask import request
-from flask import redirect
-from flask import send_from_directory
-from flask import flash
+from flask import g, render_template, request, redirect, send_from_directory, flash
 from werkzeug import secure_filename
 from public import website
 from generator import Song
@@ -34,7 +29,7 @@ def index():
 	return render_template('index.html')
 
 #NEW PROJECT PAGE
-@website.route('/newproject', methods=['GET', 'POST'])
+@website.route('/newproject/', methods=['GET', 'POST'])
 def newproject():
 	error = None
 	if request.method == 'POST':
@@ -49,18 +44,18 @@ def newproject():
 		return render_template('newproject.html')
 
 #EXISTING PROJECT PAGE
-@website.route('/oldproject')
+@website.route('/oldproject/')
 def oldproject():
 	return render_template('oldproject.html')
 
 #SYNTH PAGE
-@website.route('/synth/<notes>')#, methods=['GET', 'POST'])
+@website.route('/synth/<notes>/')#, methods=['GET', 'POST'])
 def synth(notes = None):
 	return render_template('synth.html', notes=notes, notes_no=None, values_to_set=None, project_data=None)
 
 
 #DISPLAYS WHEN WAV EXPORTED
-@website.route('/exported', methods=['GET', 'POST'])
+@website.route('/exported/', methods=['GET', 'POST'])
 def exported():
 	# if "audioformats" in request.form:
 	# 	audioformat = request.form.get("audioformats")
@@ -111,11 +106,11 @@ def exported():
 	return render_template('exported.html', jsondata=jsondata)
 
 #HELP PAGE
-@website.route('/help')
+@website.route('/help/')
 def help():
 	return render_template('help.html')
 
-@website.route('/projects', methods = ['GET', 'POST'])
+@website.route('/projects/', methods = ['GET', 'POST'])
 def userprojects():
 	if request.method == 'POST':
 		uid = request.form.get('uid')
@@ -140,12 +135,12 @@ def userprojects():
 ##
 
 # When a user is directed to this page, it downloads the file they request from the output directory
-@website.route('/return-file/<wavfilename>')
+@website.route('/return-file/<wavfilename>/')
 def return_file(wavfilename):
 	directory = '{}{}'.format(os.getcwd(),'/wav_outfiles/')
 	return send_from_directory(directory, wavfilename, attachment_filename=wavfilename, as_attachment=True, mimetype='audio/wav')
 	
-@website.route('/uploader', methods = ['GET', 'POST'])
+@website.route('/uploader/', methods = ['GET', 'POST'])
 def uploader_file():
 	'''Handles the uploading of cowbell files'''
 	if request.method == 'POST':
@@ -160,14 +155,14 @@ def uploader_file():
 		print(values_to_set)
 	return render_template('synth.html', notes=notes, values_to_set=values_to_set, project_data=None)
 
-@website.route('/return-db/<databasename>')
+@website.route('/return-db/<databasename>/')
 def return_db(databasename):
 	'''When a user is directed to a page, the database that is specified is downloaded'''
 	directory = '{}/database_outfiles/'.format(os.getcwd())
 	return send_from_directory(directory, databasename, attachment_filename=databasename, as_attachment=True)
 
 
-@website.route('/preview')
+@website.route('/preview/')
 def preview_generator():
 	'''Constructs a WAV file for preview on the synth page'''
 	print("IN PREVIEW")
@@ -183,7 +178,7 @@ def preview_generator():
 	previewFileName = previewFileName.replace('public','..')
 	return jsonify(previewname=previewFileName)
 
-@website.route('/downloader', methods=['GET', 'POST'])
+@website.route('/downloader/', methods=['GET', 'POST'])
 def downloader():
 	'''Manages the download of zips'''
 	if request.method =="POST":
@@ -217,7 +212,7 @@ def downloader():
 			return redirect('/return-db/{}'.format(databasename))
 	return "You shouldn't be here. GO BACK!"
 
-@website.route('/get_uid')
+@website.route('/get_uid/')
 def get_uid():
 	'''Generates a new UID and checks if its already in the database'''
 	import uuid
@@ -229,7 +224,7 @@ def get_uid():
 	print(uid)
 	return jsonify(uid=uid)
 
-@website.route('/get_project/<uid>', methods=['GET', 'POST'])
+@website.route('/get_project/<uid>/', methods=['GET', 'POST'])
 def get_project(uid):
 	if request.method == "POST":
 		project_ID = request.form.get("project_ID")
@@ -243,13 +238,13 @@ def get_project(uid):
 	else:
 		return "You shouldn't be here! Go back and select a project."
 
-@website.route('/add_project/<uid>/<project_data>')
+@website.route('/add_project/<uid>/<project_data>/')
 def add_project(uid, project_data):
 	
 	cloud_save.add_project()
 	return None
 
-@website.route('/get_projects/<uid>')
+@website.route('/get_projects/<uid>/')
 def get_project_list(uid):
 	projects = cloud_save.list_projects(SERVER_DB_NAME, SERVER_DB_DIRECTORY, uid)
 	return render_template('project_list.html', projects=projects, uid=uid)
